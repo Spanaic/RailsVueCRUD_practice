@@ -1,0 +1,2 @@
+class VueCrudDataBk < ApplicationRecord
+end
