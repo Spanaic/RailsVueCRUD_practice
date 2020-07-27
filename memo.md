@@ -71,4 +71,39 @@ development:
 
 [Qiita](https://qiita.com/katsuyuki/items/42b3c69bcd76c44ad64a)
 
-##
+## 表示用のページ
+
+- 表示用の html とレンダリングに使用する json データを返すように設定する
+
+```ruby
+  def index
+    @data = VueCrudDatum.all.order(updated_at: 'DESC')
+
+    respond_to do |format|
+      # html用
+      format.html
+      # json用
+      format.json { render json: @data }
+    end
+  end
+```
+
+## TRUNCATE 構文
+
+- テーブルを削除して、再作成する SQL コマンド
+- `ActiveRecord::Base.connection.execute(sqlコマンド)`
+  - SQL コマンドを直接実行する。
+
+```ruby
+  # 全て初期化
+  def new
+    ActiveRecord::Base.transaction do
+      # 高速削除
+      ActiveRecord::Base.connection.execute("TRUNCATE TABLE vue_crud_data;")
+      # 高速挿入
+      ActiveRecord::Base.connection.execute("INSERT INTO vue_crud_data SELECT * FROM vue_crud_data_bks;")
+    end
+
+    redirect_to root_url
+  end
+```
